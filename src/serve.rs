@@ -102,7 +102,7 @@ pub async fn receive_message(
 }
 
 pub fn perform_broadcast(broadcast_message: &BroadcastMessage, sender: usize) {
-    for node_id in 0..5 {
+    for node_id in [sender, (sender + 1) % 5, (sender + 2) % 5] {
         let client = reqwest::Client::new();
         let broadcast_message = broadcast_message.clone();
         tokio::spawn(async move {
