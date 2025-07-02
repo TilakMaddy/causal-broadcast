@@ -52,17 +52,16 @@ pub async fn receive_message(
     Json(payload): Json<BroadcastMessage>,
 ) -> StatusCode {
     let mut lock = state.write().expect("RW lock poisoned");
+    info!(
+        "[broadcast message received] {} --> {}",
+        payload.id.sender, lock.consensus.node_id
+    );
 
     if lock.consensus.relayed.contains(&payload.id) {
         return StatusCode::CREATED;
     }
     lock.consensus.relayed.insert(payload.id.clone());
     lock.consensus.buffer.insert(payload.clone());
-
-    info!(
-        "[broadcast message received] {} --> {}",
-        payload.id.sender, lock.consensus.node_id
-    );
 
     loop {
         let mut try_again = false;
@@ -99,7 +98,6 @@ pub async fn receive_message(
 
     info!("application state {:?}", lock.applicaton);
     perform_broadcast(&payload, lock.consensus.node_id);
-    drop(lock);
     StatusCode::CREATED
 }
 
