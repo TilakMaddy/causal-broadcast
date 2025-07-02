@@ -1,0 +1,5 @@
+[alias]
+su = "run --quiet -- --node-id "
+
+[build]
+rustflags = ["--cfg", "tracing_unstable", "-A", "warnings"]
