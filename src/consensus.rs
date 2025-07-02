@@ -14,7 +14,7 @@ pub struct MessageIdentifier {
 pub struct ConsensusState {
     pub node_id: usize,
     pub send_seq: usize,
-    pub received: [usize; 5],
+    pub delivered: [usize; 5],
     pub buffer: BTreeSet<BroadcastMessage>,
     pub relayed: BTreeSet<MessageIdentifier>,
 }

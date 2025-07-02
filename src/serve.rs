@@ -29,7 +29,7 @@ pub async fn broadcast_message(
     let mut lock = state.write().expect("RW lock poisoned");
     let sender = lock.consensus.node_id;
     let deps = {
-        let mut received = lock.consensus.received;
+        let mut received = lock.consensus.delivered;
         received[sender] = lock.consensus.send_seq;
         received
     };
@@ -71,12 +71,12 @@ pub async fn receive_message(
             // Check if buffer is eligible for delivery
             let mut buffer_qualifies = (0..5)
                 .into_iter()
-                .all(|i| buffer.id.deps[i] <= lock.consensus.received[i]);
+                .all(|i| buffer.id.deps[i] <= lock.consensus.delivered[i]);
 
             // If it is, deliver the message
             if buffer_qualifies {
                 lock.applicaton.messages.push(buffer.message.clone());
-                lock.consensus.received[buffer.id.sender] += 1;
+                lock.consensus.delivered[buffer.id.sender] += 1;
                 remove_indices.push(index);
                 try_again = true;
             }
