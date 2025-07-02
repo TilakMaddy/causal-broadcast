@@ -39,7 +39,7 @@ async fn main() {
         .with_state(shared_state);
 
     // Listen on port 3000 + node ID
-    let address = format!("0.0.0.0:{}", 3001 + cli_args.node_id);
+    let address = format!("0.0.0.0:{}", 3000 + cli_args.node_id);
     let listener = tokio::net::TcpListener::bind(address.clone())
         .await
         .unwrap();
