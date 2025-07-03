@@ -54,12 +54,14 @@ pub async fn receive_message(
 
     // -- begin critical section
     let mut lock = state.write().expect("lock poisoned");
-    let me = lock.consensus.node_id;
 
     if !lock.consensus.relayed.contains(&payload.id) {
         lock.consensus.relayed.insert(payload.id.clone());
 
+        let me = lock.consensus.node_id;
         let mut application = lock.applicaton.clone();
+
+        // Add the message to the buffer and deliver eligible messages to the application
         lock.consensus.buffer.insert(payload.clone());
         lock.consensus.deliver_eligible_messages(&mut application);
         lock.applicaton = application.clone();
