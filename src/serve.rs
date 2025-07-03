@@ -1,6 +1,5 @@
 use crate::{
     app,
-    consensus::MessageIdentifier,
     system::{FullSystemStateLocked, perform_broadcast},
 };
 use axum::{Json, extract::State, http::StatusCode};
@@ -19,6 +18,12 @@ pub struct BroadcastRequestMessage {
 pub struct BroadcastMessage {
     pub id: MessageIdentifier,
     pub message: String,
+}
+
+#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
+pub struct MessageIdentifier {
+    pub sender: usize,
+    pub deps: [usize; 5],
 }
 
 pub async fn broadcast_message(

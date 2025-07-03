@@ -1,12 +1,9 @@
-use crate::{app::ApplicationState, serve::BroadcastMessage};
+use crate::{
+    app::ApplicationState,
+    serve::{BroadcastMessage, MessageIdentifier},
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
-pub struct MessageIdentifier {
-    pub sender: usize,
-    pub deps: [usize; 5],
-}
 
 #[derive(Debug, Clone, Default)]
 pub struct ConsensusState {
