@@ -1,4 +1,8 @@
-use crate::{app, consensus::MessageIdentifier, system::FullSystemStateLocked};
+use crate::{
+    app,
+    consensus::MessageIdentifier,
+    system::{FullSystemStateLocked, perform_broadcast},
+};
 use axum::{Json, extract::State, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeSet, env::current_dir};
@@ -71,23 +75,4 @@ pub async fn receive_message(
     }
 
     StatusCode::CREATED
-}
-
-pub fn perform_broadcast(broadcast_message: &BroadcastMessage, sender: usize) {
-    for node_id in [sender, (sender + 1) % 5, (sender + 2) % 5] {
-        let client = reqwest::Client::new();
-        let broadcast_message = broadcast_message.clone();
-        tokio::spawn(async move {
-            if let Ok(response) = client
-                .post(format!("http://0.0.0.0:{}/receive", 3000 + node_id))
-                .json(&broadcast_message)
-                .send()
-                .await
-            {
-                if response.error_for_status().is_ok() {
-                    tracing::info!("[broadcast] {} ---> {}", sender, node_id);
-                }
-            };
-        });
-    }
 }
