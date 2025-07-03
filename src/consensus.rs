@@ -51,7 +51,7 @@ impl ConsensusState {
                 }
             }
 
-            self.buffer = new_buffer;
+            std::mem::swap(&mut self.buffer, &mut new_buffer);
 
             if !try_again {
                 break;
