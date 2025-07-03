@@ -1,10 +1,8 @@
-use std::{collections::BTreeSet, env::current_dir};
-
+use crate::{app, consensus::MessageIdentifier, system::FullSystemStateLocked};
 use axum::{Json, extract::State, http::StatusCode};
 use serde::{Deserialize, Serialize};
+use std::{collections::BTreeSet, env::current_dir};
 use tracing::{info, trace};
-
-use crate::{app, consensus::MessageIdentifier, system::FullSystemStateLocked};
 
 // User -> Node (request to broadcast message)
 #[derive(Debug, Deserialize)]

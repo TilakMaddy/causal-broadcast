@@ -1,8 +1,6 @@
-use std::collections::BTreeSet;
-
-use serde::{Deserialize, Serialize};
-
 use crate::{app::ApplicationState, serve::BroadcastMessage};
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeSet;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct MessageIdentifier {
