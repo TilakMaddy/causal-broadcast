@@ -2,7 +2,7 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use crate::serve::BroadcastMessage;
+use crate::{app::ApplicationState, serve::BroadcastMessage};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct MessageIdentifier {
@@ -24,6 +24,40 @@ impl ConsensusState {
         Self {
             node_id,
             ..Default::default()
+        }
+    }
+    pub fn deliver_eligible_messages(&mut self, application: &mut ApplicationState) {
+        loop {
+            let mut try_again = false;
+            let mut remove_indices = vec![];
+
+            for (index, buffer) in self.buffer.clone().iter().enumerate() {
+                // Check if buffer is eligible for delivery
+                let mut buffer_qualifies = (0..5)
+                    .into_iter()
+                    .all(|i| buffer.id.deps[i] <= self.delivered[i]);
+
+                // If it is, deliver the message
+                if buffer_qualifies {
+                    application.deliver_message(buffer.message.clone());
+                    self.delivered[buffer.id.sender] += 1;
+                    remove_indices.push(index);
+                    try_again = true;
+                }
+            }
+
+            let mut new_buffer: BTreeSet<_> = Default::default();
+            for (index, buffer) in self.buffer.clone().into_iter().enumerate() {
+                if !remove_indices.iter().any(|&r| r == index) {
+                    new_buffer.insert(buffer);
+                }
+            }
+
+            self.buffer = new_buffer;
+
+            if !try_again {
+                break;
+            }
         }
     }
 }
