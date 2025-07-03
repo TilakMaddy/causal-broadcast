@@ -30,12 +30,12 @@ impl ConsensusState {
             let mut remove_indices = vec![];
 
             for (index, buffer) in self.buffer.clone().iter().enumerate() {
-                // Check if buffer is eligible for delivery
+                // check if buffer is eligible for delivery
                 let mut buffer_qualifies = (0..5)
                     .into_iter()
                     .all(|i| buffer.id.deps[i] <= self.delivered[i]);
 
-                // If it is, deliver the message
+                // if it is, deliver the message
                 if buffer_qualifies {
                     application.deliver_message(buffer.message.clone());
                     self.delivered[buffer.id.sender] += 1;

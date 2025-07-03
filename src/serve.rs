@@ -63,7 +63,7 @@ pub async fn receive_message(
         let me = lock.consensus.node_id;
         let mut application = lock.applicaton.clone();
 
-        // Add the message to the buffer and deliver eligible messages to the application
+        // add message to buffer + deliver eligible messages to application
         lock.consensus.buffer.insert(payload.clone());
         lock.consensus.deliver_eligible_messages(&mut application);
         lock.applicaton = application.clone();
